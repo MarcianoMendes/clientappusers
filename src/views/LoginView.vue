@@ -1,18 +1,11 @@
 <template>
   <div>
-    <h2>Registro de usário</h2>
+    <h2>Login</h2>
     <div class="columns is-centered">
       <div class="column is-half">
         <div class="notification is-danger" v-if="error != undefined">
           {{ error }}
         </div>
-        <p>Nome</p>
-        <input
-          type="text"
-          v-model="name"
-          placeholder="Nome do usuário"
-          class="input"
-        />
         <p>E-mail</p>
         <input
           type="email"
@@ -27,7 +20,7 @@
           placeholder="******"
           class="input"
         />
-        <button class="button is-success" @click="register">Cadastrar</button>
+        <button class="button is-success" @click="login">Logar</button>
       </div>
     </div>
   </div>
@@ -38,22 +31,20 @@ import axios from "axios";
 export default {
   data() {
     return {
-      name: "",
       email: "",
       password: "",
       error: undefined,
     };
   },
   methods: {
-    register() {
+    login() {
       axios
-        .post("http://localhost:8686/user", {
-          name: this.name,
+        .post("http://localhost:8686/login", {
           email: this.email,
           password: this.password,
         })
         .then((res) => {
-          console.log(res);
+          localStorage.setItem("token", res.data.token);
           this.$router.push({ name: "home" });
         })
         .catch((err) => {
