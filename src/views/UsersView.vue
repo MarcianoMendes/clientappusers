@@ -16,7 +16,9 @@
           <td>{{ user.email }}</td>
           <td>{{ processRole(user.cargo) }}</td>
           <td class="buttons">
-            <button class="button is-success">Editar</button>
+            <router-link :to="{ name: 'user_edit', params: { id: user.id } }">
+              <button class="button is-success">Editar</button></router-link
+            >
             <button class="button is-danger" @click="showModalDialog(user.id)">
               Excluir
             </button>

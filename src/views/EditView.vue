@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Registro de usuário</h2>
+    <h2>Edição de usuário</h2>
     <div class="columns is-centered">
       <div class="column is-half">
         <div class="notification is-danger" v-if="error != undefined">
@@ -20,14 +20,7 @@
           placeholder="email@email.com"
           class="input"
         />
-        <p>Senha</p>
-        <input
-          type="password"
-          v-model="password"
-          placeholder="******"
-          class="input"
-        />
-        <button class="button is-success" @click="register">Cadastrar</button>
+        <button class="button is-success" @click="update">Salvar</button>
       </div>
     </div>
   </div>
@@ -35,26 +28,50 @@
 
 <script>
 import axios from "axios";
+
+var req = {
+  headers: {
+    Authorization: "Bearer " + localStorage.getItem("token"),
+  },
+};
+
 export default {
+  created() {
+    axios
+      .get("http://localhost:8686/user/" + this.$route.params.id, req)
+      .then((res) => {
+        this.name = res.data.name;
+        this.email = res.data.email;
+        this.id = res.data.id;
+      })
+      .catch((err) => {
+        console.log(err.response);
+        this.$router.push({ name: "home" });
+      });
+  },
   data() {
     return {
       name: "",
       email: "",
-      password: "",
+      id: -1,
       error: undefined,
     };
   },
   methods: {
-    register() {
+    update() {
       axios
-        .post("http://localhost:8686/user", {
-          name: this.name,
-          email: this.email,
-          password: this.password,
-        })
+        .put(
+          "http://localhost:8686/user",
+          {
+            name: this.name,
+            email: this.email,
+            id: this.id,
+          },
+          req
+        )
         .then((res) => {
           console.log(res);
-          this.$router.push({ name: "home" });
+          this.$router.push({ name: "users" });
         })
         .catch((err) => {
           this.error = err.response.data.message;
